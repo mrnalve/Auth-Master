@@ -3,25 +3,34 @@ import { Link } from "react-router-dom";
 import { AuthContext } from "../providers/AuthProviders";
 
 const Login = () => {
-  const {user, signIn} = useContext(AuthContext)
+  const { user, signIn,signInWithGoogle } = useContext(AuthContext);
   // handle login button
-  const handleLogin = event =>{
-    event.preventDefault()
+  const handleLogin = (event) => {
+    event.preventDefault();
     const form = event.target;
-    const email = form.email.value
-    const password = form.password.value
-    
+    const email = form.email.value;
+    const password = form.password.value;
+
     signIn(email, password)
-    .then(result =>{
+      .then((result) => {
+        const loggedUser = result.user;
+        console.log(loggedUser);
+        form.reset();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  // sign in with google 
+  const handleGoogleSignIn = ()=>{
+    signInWithGoogle()
+    .then(result=>{
       const loggedUser = result.user
       console.log(loggedUser);
     })
-    .catch(error=>{
-      console.log(error)
-    })
+    .catch(error => console.log(error))
   }
-
-
 
   return (
     <div className="hero min-h-screen bg-base-200">
@@ -67,10 +76,13 @@ const Login = () => {
             </div>
             <div className="form-control mt-6">
               <button className="btn btn-primary">Login</button>
+              <button onClick={handleGoogleSignIn} className="btn btn-secondary my-2">Sign In With Google</button>
             </div>
           </form>
-          <Link to={'/register'}>
-          <button className="btn btn-link">New to Auth? Please Register</button>
+          <Link to={"/register"}>
+            <button className="btn btn-link">
+              New to Auth? Please Register
+            </button>
           </Link>
         </div>
       </div>
